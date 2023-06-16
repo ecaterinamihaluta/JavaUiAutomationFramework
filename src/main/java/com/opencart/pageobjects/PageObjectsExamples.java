@@ -1,4 +1,4 @@
-package com.opencart.pageojects;
+package com.opencart.pageobjects;
 
 public class PageObjectsExamples {
 }
