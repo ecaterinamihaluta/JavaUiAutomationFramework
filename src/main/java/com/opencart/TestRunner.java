@@ -4,6 +4,9 @@ package com.opencart;
 import com.opencart.managers.DataFakerManager;
 import com.opencart.managers.DriverManager;
 import com.opencart.managers.ScrollManager;
+import com.opencart.pageobjects.AccountCreatedPage;
+import com.opencart.pageobjects.HomePage;
+import com.opencart.pageobjects.RegisterPage;
 import org.openqa.selenium.*;
 
 public class TestRunner {
@@ -27,7 +30,8 @@ public class TestRunner {
 
         WebElement registerButton = driver.findElement(By.xpath("//a[normalize-space()='Register']"));
         registerButton.click();
-        Thread.sleep(500);
+        HomePage homePage = new HomePage(driver);
+        homePage.navigateToRegistrationPageFromHeaderMenu();
 
         String firstName = DataFakerManager.getRandomName();
         System.out.println("The generated first name is " + firstName);
@@ -37,6 +41,7 @@ public class TestRunner {
 
         String email = DataFakerManager.getRandomEmail();
         System.out.println("The generated email is " + email);
+        String randomEmail =DataFakerManager.getRandomEmail();
 
         String password = DataFakerManager.getRandomPassword(10, 20);
         System.out.println("The generated password is " + password);
@@ -46,6 +51,10 @@ public class TestRunner {
 
         WebElement lastNameInput = driver.findElement(By.id("input-lastname"));
         lastNameInput.sendKeys(lastName);
+        RegisterPage registerPage = new RegisterPage(driver);
+        registerPage.fillInTheRegisterForm(firstName, lastName,randomEmail,password);
+        registerPage.switchOnThePrivacyToggle(driver);
+        registerPage.clickOnContinueButton();
 
         WebElement emailInput = driver.findElement(By.id("input-email"));
         emailInput.sendKeys(email);
@@ -61,13 +70,16 @@ public class TestRunner {
         WebElement continueButton = driver.findElement(By.xpath("//button[normalize-space()='Continue']"));
         continueButton.click();
 
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         System.out.println(driver.getCurrentUrl());
 
         driver.close();
+        AccountCreatedPage accountCreatedPage = new AccountCreatedPage(driver);
+        accountCreatedPage.logoutFromTheAccount();
 
         driver.switchTo().window(currentWindowName);
         Thread.sleep(1000);
+        System.out.println(driver.getCurrentUrl());
 
         driver.get("https://www.google.com/");
 
